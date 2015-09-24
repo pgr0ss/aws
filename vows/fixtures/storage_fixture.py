@@ -17,6 +17,8 @@ from thumbor.importer import Importer
 IMAGE_URL = 's.glbimg.com/some/image_%s.jpg'
 IMAGE_PATH = join(abspath(dirname(__file__)), 'image.jpg')
 
+IMAGE_WITH_SPACE_PATH = join(abspath(dirname(__file__)), 'image with space.jpg')
+
 with open(IMAGE_PATH, 'r') as img:
     IMAGE_BYTES = img.read()
 

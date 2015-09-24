@@ -13,7 +13,7 @@ from boto.s3.key import Key
 
 from moto import mock_s3
 
-from fixtures.storage_fixture import IMAGE_PATH, IMAGE_BYTES
+from fixtures.storage_fixture import IMAGE_PATH, IMAGE_WITH_SPACE_PATH, IMAGE_BYTES
 
 from tc_aws.loaders import s3_loader
 import thumbor.loaders.http_loader
@@ -43,6 +43,28 @@ class S3LoaderVows(Vows.Context):
 
         def should_load_from_s3(self, topic):
             image = yield s3_loader.load(topic, '/'.join(['root_path', IMAGE_PATH]))
+            expect(image).to_equal(IMAGE_BYTES)
+
+    class CanLoadImageWithSpace(Vows.Context):
+
+        @mock_s3
+        def topic(self):
+            conn = boto.connect_s3()
+            bucket = conn.create_bucket(s3_bucket)
+
+            k = Key(bucket)
+            k.key = IMAGE_WITH_SPACE_PATH
+            k.set_contents_from_string(IMAGE_BYTES)
+
+            conf = Config()
+            conf.define('S3_LOADER_BUCKET', s3_bucket, '')
+            conf.define('S3_LOADER_ROOT_PATH', 'root_path', '')
+
+            return Context(config=conf)
+
+        def should_load_from_s3(self, topic):
+            raise ValueError("this should fail")
+            image = yield s3_loader.load(topic, '/'.join(['root_path', IMAGE_WITH_SPACE_PATH]))
             expect(image).to_equal(IMAGE_BYTES)
 
     class ValidatesBuckets(Vows.Context):
