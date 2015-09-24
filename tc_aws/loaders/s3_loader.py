@@ -27,7 +27,7 @@ def load_sync(context, url, callback):
         )
         file_key = None
         try:
-            file_key = bucket_loader.get_key(url)
+            file_key = bucket_loader.get_key(key)
         except Exception, e:
             logger.warn("ERROR retrieving image from S3 {0}: {1}".format(url, str(e)))
 
